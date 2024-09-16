@@ -11,6 +11,7 @@ GitHub repository:
 
 from my_modules.helper import check_input_conditions, clear_screen, get_encrypted_text
 from my_modules.q1_t1_extract_text import CSVTextExtractor
+from my_modules.q1_t2_research import TextProcessor
 from my_modules.q1_t3_1_most_common_words import TopWordsExtractor
 from my_modules.q1_t3_2_most_common_tokens import UniqueTokenCounter
 from my_modules.q1_t4_named_entity_recognition import NERProcessor
@@ -54,13 +55,14 @@ class MenuManager:
     def handle_question_1(self):
         q1_options = {
             "1": ("Task 1 - Extract Text", task1_extract_text),
-            "2": ("Task 3.1 - Count Words", task3_1_count_word),
-            "3": ("Task 3.2 - Tokenize Text", task3_2_tokenize_text),
-            "4": ("Task 4 - Named Entity Recognition - BioBert", task4_ner_biobert),
-            "5": ("Task 4 - Named Entity Recognition - SciSpaCy", task4_ner_scispacy),
-            "6": ("Return to Main Menu", None),
+            "2": ("Task 2 - Test Installed Libraries", taks2_research),
+            "3": ("Task 3.1 - Count Words", task3_1_count_word),
+            "4": ("Task 3.2 - Tokenize Text", task3_2_tokenize_text),
+            "5": ("Task 4 - Named Entity Recognition - BioBert", task4_ner_biobert),
+            "6": ("Task 4 - Named Entity Recognition - SciSpaCy", task4_ner_scispacy),
+            "7": ("Return to Main Menu", None),
         }
-        self.process_sub_menu("QUESTION 1 - NLP TASKS", q1_options, "6")
+        self.process_sub_menu("QUESTION 1 - NLP TASKS", q1_options, "7")
 
     def handle_question_2(self):
         q2_options = {
@@ -135,6 +137,14 @@ def task1_extract_text():
     extractor.extract_text_from_csv_files()
 
 
+def taks2_research():
+    print("\nRunning Task 2: Research")
+    processor = TextProcessor()
+    sample_text = "Aspirin is a medication used to reduce pain, fever, or inflammation."
+    processor.process_text_with_spacy(sample_text)
+    processor.tokenize_with_biobert(sample_text)
+
+
 def task3_1_count_word():
     print("\nRunning Task 3.1: Count Words and Save Top 30 Words")
     extractor = TopWordsExtractor(
@@ -180,7 +190,12 @@ def chapter2_the_chamber_of_strings_ascii():
     print("\nRunning Chapter 2: The Chamber of Strings - ASCII code")
     # Example string
     sample_string = "56aAww1984sktr235270aYmn145ss785fsq31D0"
-    string = get_encrypted_text("./input/example_string.txt", sample_string)
+    while True:
+        string = get_encrypted_text("./input/example_string.txt", sample_string)
+        if len(string) < 16:
+            print("The length of the string must be at least 16 characters.")
+        else:
+            break
     processor = StringCipherProcessor(string=string)
     processor.process_string()
 

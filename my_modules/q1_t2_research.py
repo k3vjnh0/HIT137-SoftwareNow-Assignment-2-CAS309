@@ -1,29 +1,38 @@
 import spacy
-from transformers import AutoModelForTokenClassification, AutoTokenizer
+from transformers import AutoTokenizer, AutoModelForTokenClassification
 
-# TASK 2: Process text using SpaCy and BioBERT
-# Load SpaCy models
-nlp_sci_sm = spacy.load("en_core_sci_sm")
-print("Loaded SpaCy model: en_core_sci_sm")
 
-nlp_ner_bc5cdr_md = spacy.load("en_ner_bc5cdr_md")
-print("Loaded SpaCy model: en_ner_bc5cdr_md")
+class TextProcessor:
+    def __init__(self):
+        # Load SpaCy models
+        self.nlp_sci_sm = spacy.load("en_core_sci_sm")
+        print("Loaded SpaCy model: en_core_sci_sm")
 
-# Load BioBERT model from Hugging Face Transformers
-tokenizer = AutoTokenizer.from_pretrained("dmis-lab/biobert-v1.1")
-model = AutoModelForTokenClassification.from_pretrained("dmis-lab/biobert-v1.1")
-print("Loaded BioBERT model: dmis-lab/biobert-v1.1")
+        self.nlp_ner_bc5cdr_md = spacy.load("en_ner_bc5cdr_md")
+        print("Loaded SpaCy model: en_ner_bc5cdr_md")
 
-# Example text
-sample_text = "Aspirin is a medication used to reduce pain, fever, or inflammation."
+        # Load BioBERT model and tokenizer from Hugging Face
+        self.tokenizer = AutoTokenizer.from_pretrained("dmis-lab/biobert-v1.1")
+        self.model = AutoModelForTokenClassification.from_pretrained(
+            "dmis-lab/biobert-v1.1"
+        )
+        print("Loaded BioBERT model: dmis-lab/biobert-v1.1")
 
-# Process the text using the SpaCy models
-doc = nlp_sci_sm(sample_text)
-print(f"Processed text using en_core_sci_sm: {[ent.text for ent in doc.ents]}")
+    def process_text_with_spacy(self, text):
+        # Process the text using en_core_sci_sm
+        doc_sci_sm = self.nlp_sci_sm(text)
+        sci_sm_ents = [ent.text for ent in doc_sci_sm.ents]
+        print(f"Processed text using en_core_sci_sm: {sci_sm_ents}")
 
-doc = nlp_ner_bc5cdr_md(sample_text)
-print(f"Processed text using en_ner_bc5cdr_md: {[ent.text for ent in doc.ents]}")
+        # Process the text using en_ner_bc5cdr_md
+        doc_ner_bc5cdr_md = self.nlp_ner_bc5cdr_md(text)
+        ner_bc5cdr_md_ents = [ent.text for ent in doc_ner_bc5cdr_md.ents]
+        print(f"Processed text using en_ner_bc5cdr_md: {ner_bc5cdr_md_ents}")
 
-# Tokenize the text using BioBERT
-tokens = tokenizer(sample_text)
-print(f"Tokens using BioBERT: {tokens}")
+        return sci_sm_ents, ner_bc5cdr_md_ents
+
+    def tokenize_with_biobert(self, text):
+        # Tokenize the text using BioBERT
+        tokens = self.tokenizer(text)
+        print(f"Tokens using BioBERT: {tokens}")
+        return tokens
