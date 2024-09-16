@@ -116,6 +116,9 @@ class NERProcessor:
             # Combine subword tokens into full entities
             combined_entities = self.combine_entities_biobert(ner_results)
 
+            if combined_entities is None:
+                continue  # Skip if there are no entities
+
             # Filter entities based on labels
             diseases = [
                 entity[0] for entity in combined_entities if "Disease" in entity[1]
@@ -152,16 +155,20 @@ class NERProcessor:
             if word.startswith("##"):
                 current_entity += word[2:]
             else:
-                if current_entity:
+                if (
+                    current_entity and current_label
+                ):  # Safeguard against appending empty entities
                     entities.append((current_entity, current_label))
                 current_entity = word
                 current_label = label
 
         # Append the last entity if any
-        if current_entity:
+        if (
+            current_entity and current_label
+        ):  # Safeguard against appending empty entities
             entities.append((current_entity, current_label))
 
-        return entities
+        return entities if entities else None  # Return None if no entities found
 
     def process_text_scispacy(self, text):
         """
