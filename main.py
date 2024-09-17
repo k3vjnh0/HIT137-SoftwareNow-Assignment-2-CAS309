@@ -166,18 +166,24 @@ def task3_2_tokenize_text():
 
 def task4_ner_biobert():
     print("\nRunning Task 4: NER with BioBert")
-    biobert_ner = NERProcessor("judithrosell/BioBERT_BC5CDR_NER_new", "biobert")
-    biobert_ner.perform_ner(
-        "./output/extracted_text.txt", "./output/ner_biobert_results.csv"
+    biobert_ner = NERProcessor(
+        "./output/extracted_text.txt",
+        "./output/ner_biobert_results.csv",
+        "judithrosell/BioBERT_BC5CDR_NER_new",
+        "biobert",
     )
+    biobert_ner.perform_ner()
 
 
 def task4_ner_scispacy():
     print("\nRunning Task 4: NER with SciSpaCy")
-    scispacy_ner = NERProcessor("en_ner_bc5cdr_md", "scispacy")
-    scispacy_ner.perform_ner(
-        "./output/extracted_text.txt", "./output/ner_scispacy_results.csv"
+    scispacy_ner = NERProcessor(
+        "./output/extracted_text.txt",
+        "./output/ner_scispacy_results.csv",
+        "en_ner_bc5cdr_md",
+        "scispacy",
     )
+    scispacy_ner.perform_ner()
 
 
 def chapter1_the_gatekeeper():

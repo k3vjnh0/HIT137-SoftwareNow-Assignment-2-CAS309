@@ -1,4 +1,5 @@
 import csv
+import os
 import warnings
 from collections import Counter
 
@@ -16,14 +17,18 @@ class NERProcessor:
     and extract counts of diseases and drugs from a text file.
     """
 
-    def __init__(self, model_name, model_type):
+    def __init__(self, input_file, output_file, model_name, model_type):
         """
         Initialize the NERProcessor instance with the specified model.
 
         Args:
+            input_file (str): Path to the text file to be tokenized.
+            output_file (str): Path where the output CSV file will be saved.
             model_name (str): The pretrained model to use.
             model_type (str): The type of model ('biobert' or 'scispacy').
         """
+        self.input_file = input_file
+        self.output_file = output_file
         self.model_name = model_name
         self.model_type = model_type.lower()
 
@@ -64,16 +69,23 @@ class NERProcessor:
 
         return model, tokenizer
 
-    def perform_ner(self, input_file, output_file):
+    def perform_ner(self):
         """
         Performs NER on the input file and saves the results to the output file.
-
-        Args:
-            input_file (str): Path to the input text file.
-            output_file (str): Path to the output CSV file.
         """
+        # Check if the input file exists
+        if not os.path.isfile(self.input_file):
+            print(f"Error: The file '{self.input_file}' does not exist.")
+            return
+
+        # Check if the output directory exists; create it if not
+        output_dir = os.path.dirname(self.output_file)
+        if output_dir and not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+            print(f"Created the output directory: {output_dir}")
+
         # Load the text from the file
-        with open(input_file, "r", encoding="utf-8") as text_file:
+        with open(self.input_file, "r", encoding="utf-8") as text_file:
             text = text_file.read()
 
         if self.model_type == "biobert":
@@ -86,7 +98,7 @@ class NERProcessor:
             raise ValueError("Invalid model_type. Choose 'biobert' or 'scispacy'.")
 
         # Save the results to a CSV file
-        self.save_counts_to_csv(output_file, diseases_counts, drugs_counts)
+        self.save_counts_to_csv(self.output_file, diseases_counts, drugs_counts)
 
     def process_text_biobert(self, text):
         """
